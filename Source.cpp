@@ -1,24 +1,28 @@
 #include <iostream>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
+#include <string>
 
 struct City {
 private:
-	int xCord;
-	int yCord;
+	unsigned int cityNumber; // numerical identifier for city
+	unsigned int xCord;
+	unsigned int yCord;
 	bool visited;
 
 public:
 	/* Constructor */
-	City(int x, int y) {
+	City(int x, int y, int cityNumber) {
 		this->xCord = x;
 		this->yCord = y;
+		this->cityNumber = cityNumber;
 		visited = false;
 	}
 
 	/* Accessors */
 	int getXCord() { return xCord; }
 	int getYCord() { return yCord; }
+	int getCityNum() { return cityNumber; }
 
 	
 	/* Mutators */
@@ -71,7 +75,7 @@ void assignCities(City** listOfCities, int gridSize, int numOfCities) {
 		unsigned int tempX = rand() % gridSize; // assigns random x coordinate
 		unsigned int tempY = rand() % gridSize; // assigns random y coordinate
 		if (i == 0)
-			listOfCities[i] = new City(tempX, tempY);
+			listOfCities[i] = new City(tempX, tempY, i);
 		else {
 			// checks for duplicate cities
 			for (int j = 0; j < i; j++) {
@@ -81,7 +85,7 @@ void assignCities(City** listOfCities, int gridSize, int numOfCities) {
 					j = -1;  // reset loop
 				}
 				else
-					listOfCities[i] = new City(tempX, tempY);
+					listOfCities[i] = new City(tempX, tempY, i);
 			}
 		}
 		std::cout << "City " << (i + 1) << ": (" << listOfCities[i]->getXCord() << ", " << listOfCities[i]->getYCord() << ")\n";
@@ -89,19 +93,25 @@ void assignCities(City** listOfCities, int gridSize, int numOfCities) {
 }
 
 void displayGrid(City** list, int grid, int numOfCities) {
+	
+	unsigned int cityNum;
 	bool cityFound = false;
+	
 	// display y axis on board
 	for (int i = 0; i < grid; i++) {
 		// display x axis on board
 		for (int j = 0; j < grid; j++) {
 			cityFound = false;
+			//checks if city is at this coordinate
 			for (int k = 0; k < numOfCities; k++) {
 				if ((list[k]->getXCord() == j) && (list[k]->getYCord() == i)) {
-					cityFound = true;
+					cityFound = true; 
+					cityNum = list[k]->getCityNum();
+					break;
 				}
 			}
 			if (cityFound)
-				std::cout << "|C";
+				std::cout << "|" << cityNum;
 			else
 				std::cout << "| ";
 		}
