@@ -3,7 +3,7 @@
 #include <time.h>       /* time */
 #include <string>
 
-struct City {
+class City {
 private:
 	unsigned int cityNumber; // numerical identifier for city
 	unsigned int xCord;
@@ -38,7 +38,7 @@ public:
 
 
 /* Prototypes */
-
+int getValidNumber(int, int);
 void displayGrid(City**, int, int);
 void assignCities(City**, int, int);
 
@@ -49,11 +49,11 @@ int main() {
 	unsigned int numOfCities; // number of cities
 	unsigned int gridSize;  //size of sqaure grid
 
-	std::cout << "Enter number of cities: ";
-	std::cin >> numOfCities;
+	std::cout << "Enter number of cities (min:4, max:9): ";
+	numOfCities = getValidNumber(4,9);
 
-	std::cout << "Enter size of square grid: ";  // must be more than the sqrt(numOfcities)
-	std::cin >> gridSize;
+	std::cout << "Enter size of square grid (min:10, max:30): ";  // must be more than the sqrt(numOfcities)
+	gridSize = getValidNumber(10, 30);
 
 	City ** listOfCities = new City*[numOfCities];  // dynamic array of Cities
 
@@ -66,6 +66,41 @@ int main() {
 	return 0;
 }
 
+int getValidNumber(int min, int max) {
+		std::string num;
+		int number;
+		bool isNumber = true;
+		bool end_loop = false;
+		while (!end_loop) {
+			getline(std::cin, num);
+			if (num.empty()) {
+				isNumber = false;
+				std::cout << "No input was entered." << std::endl;
+			}
+			else {
+				for (unsigned int i = 0; i < num.length(); i++) {
+					if (!isdigit(num[i])) {
+						isNumber = false;
+						std::cout << "Only numbers between " << min << " and " << max << " can be given as input." << std::endl;
+						break;
+					}
+					else
+						isNumber = true;
+				}
+			}
+			if (isNumber) {
+				number = stoi(num);
+				if (number >= min && number <= max)
+					end_loop = true;
+				else
+					std::cout << "Only numbers between " << min << " and " << max << " can be given as input." << std::endl;
+			}
+		}
+		return number;
+}
+
+
+// assigns city to spaces on grid
 void assignCities(City** listOfCities, int gridSize, int numOfCities) {
 	/* random seed */
 	srand(time(NULL));
@@ -75,7 +110,7 @@ void assignCities(City** listOfCities, int gridSize, int numOfCities) {
 		unsigned int tempX = rand() % gridSize; // assigns random x coordinate
 		unsigned int tempY = rand() % gridSize; // assigns random y coordinate
 		if (i == 0)
-			listOfCities[i] = new City(tempX, tempY, i);
+			listOfCities[i] = new City(tempX, tempY, (i + 1));
 		else {
 			// checks for duplicate cities
 			for (int j = 0; j < i; j++) {
@@ -85,13 +120,15 @@ void assignCities(City** listOfCities, int gridSize, int numOfCities) {
 					j = -1;  // reset loop
 				}
 				else
-					listOfCities[i] = new City(tempX, tempY, i);
+					listOfCities[i] = new City(tempX, tempY, (i + 1));
 			}
 		}
-		std::cout << "City " << (i + 1) << ": (" << listOfCities[i]->getXCord() << ", " << listOfCities[i]->getYCord() << ")\n";
+		std::cout << "City " << (i+1) << ": (" << listOfCities[i]->getXCord() << ", " << listOfCities[i]->getYCord() << ")\n";
 	}
 }
 
+
+// displays grid of cities and spaces
 void displayGrid(City** list, int grid, int numOfCities) {
 	
 	unsigned int cityNum;
