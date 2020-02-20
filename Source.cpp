@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
-#include <string>
 
 struct City {
 private:
@@ -10,15 +9,19 @@ private:
 	bool visited;
 
 public:
-	
+	/* Constructor */
 	City(int x, int y) {
 		this->xCord = x;
 		this->yCord = y;
+		visited = false;
 	}
 
+	/* Accessors */
 	int getXCord() { return xCord; }
 	int getYCord() { return yCord; }
 
+	
+	/* Mutators */
 	void setCords(int x, int y) {
 		this->xCord = x;
 		this->yCord = y;
@@ -27,8 +30,6 @@ public:
 	void setVisited(bool visit) {
 		this->visited = visit;
 	}
-	
-
 };
 
 
@@ -41,12 +42,8 @@ void assignCities(City**, int, int);
 int main() {
 	
 	/* variables */
-	
 	unsigned int numOfCities; // number of cities
 	unsigned int gridSize;  //size of sqaure grid
-
-	/* random seed */
-	srand(time(NULL));
 
 	std::cout << "Enter number of cities: ";
 	std::cin >> numOfCities;
@@ -54,7 +51,7 @@ int main() {
 	std::cout << "Enter size of square grid: ";  // must be more than the sqrt(numOfcities)
 	std::cin >> gridSize;
 
-	City ** listOfCities = new City*[numOfCities];
+	City ** listOfCities = new City*[numOfCities];  // dynamic array of Cities
 
 	assignCities(listOfCities, gridSize, numOfCities);
 
@@ -66,10 +63,13 @@ int main() {
 }
 
 void assignCities(City** listOfCities, int gridSize, int numOfCities) {
+	/* random seed */
+	srand(time(NULL));
+	
 	//assigns city spot on grid
 	for (int i = 0; i < numOfCities; i++) {
-		unsigned int tempX = rand() % gridSize;
-		unsigned int tempY = rand() % gridSize;
+		unsigned int tempX = rand() % gridSize; // assigns random x coordinate
+		unsigned int tempY = rand() % gridSize; // assigns random y coordinate
 		if (i == 0)
 			listOfCities[i] = new City(tempX, tempY);
 		else {
