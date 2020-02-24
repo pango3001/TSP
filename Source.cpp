@@ -2,6 +2,48 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include <string>
+#include <math.h>	/* sqrt */
+
+/* code adapted from https://sahebg.github.io/computersceince/travelling-salesman-problem-c-program/ */
+
+int visited_cities[10], cost = 0;
+ 
+int tsp (int c, float matrix[30][30], int numcities)
+{
+	int count, nearest_city = 999;
+	int minimum = 999, temp;
+	for(count = 0; count < numcities; count++) {
+		if((matrix[c][count] != 0) && (visited_cities[count] == 0)) {
+			if(matrix[c][count] < minimum) {
+				minimum = matrix[count][0] + matrix[c][count];
+			}
+			temp = matrix[c][count];
+			nearest_city = count;
+		}
+	}
+	if(minimum != 999) {
+		cost = cost + temp;
+	}
+	return nearest_city;
+}
+ 
+void minimum_cost(int city, float matrix[30][30], int numcities)
+{
+	int nearest_city;
+	visited_cities[city] = 1;
+	printf("%d ", city + 1);
+	nearest_city = tsp(city, matrix, numcities);
+	
+	if (nearest_city == 999) {
+		nearest_city = 0;
+		printf("%d", nearest_city + 1);
+		cost = cost + matrix[city][nearest_city];
+		return;
+	}
+	minimum_cost(nearest_city, matrix, numcities);
+}
+ 
+
 
 class City {
 private:
@@ -42,6 +84,13 @@ int getValidNumber(int, int);
 void displayGrid(City**, int, int);
 void assignCities(City**, int, int);
 
+float city_distance (City *a, City *b)
+{
+	float dx = a->getXCord() - b->getXCord();
+	float dy = a->getYCord() - b->getYCord();
+	
+	return sqrt((dx * dx) + (dy * dy));
+}
 
 int main() {
 	
@@ -60,6 +109,22 @@ int main() {
 	assignCities(listOfCities, gridSize, numOfCities);
 
 	displayGrid(listOfCities,gridSize,numOfCities); // displays the grid with cities
+	
+	printf("cost matrix: \n");
+	float cm[30][30];
+	for (int i = 0; i < numOfCities; i++) {
+		for (int j = 0; j < numOfCities; j++) {
+			cm[i][j] = city_distance(listOfCities[i], listOfCities[j]);
+			printf("%5.1f ", cm[i][j]);
+		}
+		printf("\n");
+	}
+	
+	printf("minimum path: ");
+	
+	minimum_cost(0, cm, numOfCities);
+	
+	printf("\ncost %d\n", cost);
 	
 	delete[] listOfCities;
 
